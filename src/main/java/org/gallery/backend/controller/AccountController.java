@@ -36,7 +36,7 @@ public class AccountController {
             int id = member.getId();
             String token = jwtService.getToken("id", id);
 
-            Cookie cookie = new Cookie("token", token);
+            Cookie cookie = new Cookie("token",token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
 
@@ -49,10 +49,10 @@ public class AccountController {
     }
 
     @GetMapping("/api/account/check")
-    public ResponseEntity check(@CookieValue(value = "token", required = false) String token) {
+    public ResponseEntity check(@CookieValue(value = "token", required = false) String token){
         Claims claims = jwtService.getClaims(token);
 
-        if (claims != null) {
+        if(claims != null){
             int id = Integer.parseInt(claims.get("id").toString());
             return new ResponseEntity<>(id, HttpStatus.OK);
         }

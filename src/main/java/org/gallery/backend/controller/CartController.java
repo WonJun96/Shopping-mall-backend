@@ -28,7 +28,7 @@ public class CartController {
     @GetMapping("/api/cart/items")
     public ResponseEntity getCartItems(@CookieValue(value = "token", required = false) String token) {
 
-        if (jwtService.isValid(token)) {
+        if (!jwtService.isValid(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         int memberId = jwtService.getId(token);
@@ -40,11 +40,11 @@ public class CartController {
     }
 
     @PostMapping("/api/cart/items/{itemId}")
-    public ResponseEntity<Item> pushCartItem(
+    public ResponseEntity pushCartItem(
             @PathVariable("itemId") int itemId,
             @CookieValue(value = "token", required = false) String token
     ) {
-        if (jwtService.isValid(token)) {
+        if (!jwtService.isValid(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
@@ -57,6 +57,22 @@ public class CartController {
             newCart.setItemId(itemId);
             cartRepository.save(newCart);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/cart/items/{itemId}")
+    public ResponseEntity removeCartItem(
+            @PathVariable("itemId") int itemId,
+            @CookieValue(value = "token", required = false) String token
+    ) {
+        if (!jwtService.isValid(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        int memberId = jwtService.getId(token);
+        Cart cart = cartRepository.findByMemberIdAndItemId(memberId, itemId);
+
+        cartRepository.delete(cart);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

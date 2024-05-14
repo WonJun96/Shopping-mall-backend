@@ -10,14 +10,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service("JwtService")
-public class JwtServiceImpl implements JwtService{
-    private String secretKey = "asd12t12fasf123asd!!212@@asg12asdasijdfasdasdasdasdasdasdaszxcasdaasdo";
+@Service("jwtService")
+public class JwtServiceImpl implements JwtService {
+
+    private String secretKey = "abbci2ioadij@@@ai17a662###8139!!!18ausudahd178316738687687@@ad6g";
+
     @Override
     public String getToken(String key, Object value) {
 
         Date expTime = new Date();
-        expTime.setTime(expTime.getTime() + 1000 * 60 * 5);
+        expTime.setTime(expTime.getTime() + 1000 * 60 * 30);
         byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
         Key signKey = new SecretKeySpec(secretByteKey, SignatureAlgorithm.HS256.getJcaName());
 
@@ -38,20 +40,18 @@ public class JwtServiceImpl implements JwtService{
 
     @Override
     public Claims getClaims(String token) {
-        if(token != null && !"".equals(token))
-        {
-            try{
+        if (token != null && !"".equals(token)) {
+            try {
                 byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
                 Key signKey = new SecretKeySpec(secretByteKey, SignatureAlgorithm.HS256.getJcaName());
                 return Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(token).getBody();
-            }
-            catch (ExpiredJwtException e){
+            } catch (ExpiredJwtException e) {
                 // 만료됨
-            }
-            catch (JwtException e){
+            } catch (JwtException e) {
                 // 유효하지 않음
             }
         }
+
         return null;
     }
 
@@ -64,9 +64,10 @@ public class JwtServiceImpl implements JwtService{
     public int getId(String token) {
         Claims claims = this.getClaims(token);
 
-        if (claims != null){
+        if (claims != null) {
             return Integer.parseInt(claims.get("id").toString());
         }
+
         return 0;
     }
 }
